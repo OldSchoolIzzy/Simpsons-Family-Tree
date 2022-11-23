@@ -11,32 +11,32 @@ public class Main {
         showAllPeople(treeEntries);
         ft = AddNewPerson( ft );   // ToDO Add Maggie born 2021 with bart and lisa siblings
         // and homer and marge (Mom and dad)
-        System.out.printf("\n ------------------- All people with Maggie");
+        System.out.print("\n -------- All people with Maggie ---------");
         TreeMap<String, Person> treeEntries2 = ft.getAllPeople();
         showAllPeople(treeEntries2);
         String name = "Jackie";
         System.out.printf("\n --- Showing Direct Descendants of %s", name);
         ShowDirectDescendants( name );
         name = "Abbey";
-        System.out.printf("\n ---Showing Direct Descendants of %s", name);
+        System.out.printf("\n --- Showing Direct Descendants of %s", name);
         ShowDirectDescendants( name);
         name = "Lisa";
-        System.out.printf("\n ---- Showing Direct Descendants of %s", name);
+        System.out.printf("\n --- Showing Direct Descendants of %s", name);
         ShowDirectDescendants( name);
 
         name = "Mona";
-        System.out.printf("\n ---- Showing Direct Descendants of %s", name);
+        System.out.printf("\n --- Showing Direct Descendants of %s", name);
         ShowDirectDescendants( name);
 
         name="Homer";
-        System.out.printf("\n ---- Showing Siblings of %s", name);
+        System.out.printf("\n --- Showing Siblings of %s", name);
         ShowMySiblings( name);
         name="Maggie";
-        System.out.printf("\n ---- Showing Siblings of %s", name);
+        System.out.printf("\n --- Showing Siblings of %s", name);
         ShowMySiblings(name);
 
         name="Clancy";
-        System.out.printf("\n ---- Showing Siblings of %s", name);
+        System.out.printf("\n --- Showing Siblings of %s", name);
         ShowMySiblings(name);
 
 //        showThisPersonsTree(treeEntries, "Marge");
@@ -46,7 +46,6 @@ public class Main {
         // ToDo:
         // Output all of the siblings of this person. That is someone who shares a mother or father
         // For example if Person is Marge you would show Marge, Patty and Selma
-
 
     }
 
@@ -129,11 +128,13 @@ public class Main {
         ft.addParent("Maggie", homer);
         ft.addParent("Bart", marge );
         ft.addParent( "Lisa", marge);
-        ft.addParent("Maggie", maggie);
+        ft.addParent("Maggie", marge);
         ft.addChild("Marge",lisa);
         ft.addChild("Marge",bart);
+        ft.addChild("Marge",maggie);
         ft.addChild("Homer", lisa);
         ft.addChild("Homer", bart);
+        ft.addChild("Homer", maggie);
 
         // Lets add Marges Sisters
         Person Selma = new Person( "Selma", 1991 );
