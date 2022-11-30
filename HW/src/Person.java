@@ -73,7 +73,7 @@ public class Person {
         String spouse = null;
         if (this.spouse != null ) spouse = this.spouse.name;
         return "Person:" +
-                ", name='" + name + '\'' +
+                " name='" + name + '\'' +
                 ", birthYear=" + birthYear +
                 ", children=" + children.size() +
                 ", parent=" + parent.size() +

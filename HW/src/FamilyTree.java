@@ -48,5 +48,4 @@ public class FamilyTree {
     public TreeMap<String , Person> getAllPeople( ){
         return tree;
     }
-
 }

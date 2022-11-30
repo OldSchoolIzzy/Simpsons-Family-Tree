@@ -1,76 +1,150 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.TreeMap;
+import jdk.dynalink.NoSuchDynamicMethodException;
+
+import java.util.*;
 
 public class Main {
     public static void main(String[] args) {
         FamilyTree ft = configureTree();
+
         TreeMap<String, Person> treeEntries = ft.getAllPeople();
 
-        //HashMap<String, Person> treeEntries = configureTree();
         showAllPeople(treeEntries);
-        ft = AddNewPerson( ft );   // ToDO Add Maggie born 2021 with bart and lisa siblings
-        // and homer and marge (Mom and dad)
-        System.out.print("\n -------- All people with Maggie ---------");
+
+        System.out.println();
+        AddNewPerson(ft);
+
+        System.out.print("\n-------- All people ---------");
         TreeMap<String, Person> treeEntries2 = ft.getAllPeople();
+
         showAllPeople(treeEntries2);
+
         String name = "Jackie";
-        System.out.printf("\n --- Showing Direct Descendants of %s", name);
-        ShowDirectDescendants( name );
+        System.out.printf("\n ---- Showing Direct Descendants of %s", name);
+        System.out.println();
+        ShowDirectDescendants( name , treeEntries2 );
+
         name = "Abbey";
         System.out.printf("\n --- Showing Direct Descendants of %s", name);
-        ShowDirectDescendants( name);
+        System.out.println();
+        ShowDirectDescendants( name, treeEntries2);
+
         name = "Lisa";
         System.out.printf("\n --- Showing Direct Descendants of %s", name);
-        ShowDirectDescendants( name);
+        System.out.println();
+        ShowDirectDescendants( name, treeEntries2 );
 
         name = "Mona";
         System.out.printf("\n --- Showing Direct Descendants of %s", name);
-        ShowDirectDescendants( name);
+        System.out.println();
+        ShowDirectDescendants( name, treeEntries2 );
 
-        name="Homer";
+        name = "Homer";
         System.out.printf("\n --- Showing Siblings of %s", name);
-        ShowMySiblings( name);
-        name="Maggie";
+        System.out.println();
+        ShowMySiblings( name, treeEntries2 );
+
+        name = "Maggie";
         System.out.printf("\n --- Showing Siblings of %s", name);
-        ShowMySiblings(name);
+        System.out.println();
+        ShowMySiblings(name, treeEntries2);
 
-        name="Clancy";
+        name = "Clancy";
         System.out.printf("\n --- Showing Siblings of %s", name);
-        ShowMySiblings(name);
-
-//        showThisPersonsTree(treeEntries, "Marge");
+        System.out.println();
+        ShowMySiblings(name, treeEntries2 );
     }
 
-    private static void ShowMySiblings(String person) {
-        // ToDo:
-        // Output all of the siblings of this person. That is someone who shares a mother or father
-        // For example if Person is Marge you would show Marge, Patty and Selma
-
+    private static void ShowMySiblings(String person, TreeMap<String, Person> tree) {
+        HashSet<Person> siblings = new HashSet<>();
+        for (String p : tree.keySet()){
+            Person person1 = tree.get(p);
+            if (person1.getName().equals(person)){
+                ArrayList<Person> parents = person1.parent;
+                for (Person parent : parents){
+                    ArrayList<Person> children = parent.children;
+                    for (Person child : children){
+                        if (!child.getName().equals(person)){
+                            siblings.add(child);
+                        }
+                    }
+                }
+            }
+        }
+        System.out.println(person + " siblings are ...");
+        for (Person sibling : siblings){
+            System.out.println(sibling.getName());
+        }
     }
 
-    private static void ShowDirectDescendants(String ancestor) {
-        // ToDo: Write this method that shows the direct descendant
-        // For example, if anester="Jackie" it would show:
-        //    Jackie married to Clancy
-        //     Patty
-        //     Selma
-        //     Marge
-        //       Bart
-        //       Lisa
+    private static void ShowDirectDescendants(String ancestor, TreeMap<String, Person> tree) {
+        for (String p : tree.keySet()){
+            Person person = tree.get(p);
+            if (person.getName().equals(ancestor)){
+                ArrayList<Person> children = person.children;
+                for (Person child : children){
+                    System.out.println(child.getName());
+                    if (child.children.size() != 0){
+                        ArrayList<Person> children2 = child.children;
+                        for (Person ch : children2){
+                            System.out.println(ch.getName());
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private static FamilyTree AddNewPerson(FamilyTree ft) {
-        // ToDo: Prompt the user for new person:
-        //    Name and year birth
-        //    Mom and Dad
-        //    Spouse
-        //   Add this person to the tree
+    private static void AddNewPerson(FamilyTree ft) {
 
-        return ft;
+        Scanner scan = new Scanner(System.in);
+
+        System.out.println("Enter name of person you want to add: ");
+        String name = scan.nextLine();
+
+        System.out.println("Enter their birth year: ");
+        int birthYear = scan.nextInt();
+
+        System.out.println("Enter name of their mom: ");
+        String momName = scan.next();
+
+        System.out.println("Enter their birth year: ");
+        int momBirthYear = scan.nextInt();
+
+        System.out.println("Enter name of their dad: ");
+        String dadName = scan.next();
+
+        System.out.println("Enter their birth year: ");
+        int dadBirthYear = scan.nextInt();
+
+        System.out.println("Enter name of their spouse: ");
+        String spouseName = scan.next();
+
+        System.out.println("Enter their birth year: ");
+        int spouseBirthYear = scan.nextInt();
+
+        Person p1 = new Person(name, birthYear);
+        ft.addPerson(name, p1);
+
+        Person spouse = new Person(spouseName, spouseBirthYear);
+        ft.addPerson(spouseName, spouse);
+
+        p1.spouse = spouse;
+        spouse.spouse = p1;
+
+        Person mom = new Person(momName, momBirthYear);
+        ft.addPerson(momName, mom);
+
+        Person dad = new Person(dadName, dadBirthYear);
+        ft.addPerson(dadName, dad);
+
+        mom.spouse = dad;
+        dad.spouse = mom;
+
+        ft.addParent(name, mom);
+        ft.addParent(name, dad);
+        ft.addChild(momName, p1);
+        ft.addChild(dadName, p1);
     }
-
-
 
     private static void showAllPeople(TreeMap<String, Person> treeEntries) {
         for (String name : treeEntries.keySet()) {
@@ -79,36 +153,10 @@ public class Main {
         }
     }
 
-    private static void showThisPersonsTree(HashMap<String, Person> treeEntries, String searchPerson) {
-        System.out.printf("\n =--------------");
-        if (treeEntries.containsKey(searchPerson)) {
-            Person targetPerson = treeEntries.get(searchPerson);
-            boolean gotMoreToDo = true;
-            while (gotMoreToDo) {
-                gotMoreToDo = false;
-
-            }
-        } else {
-            System.out.printf("\n The Person:%s does not exist", searchPerson);
-        }
-        for (String name : treeEntries.keySet()) {
-            Person m = treeEntries.get(name);
-            System.out.printf("\n%s", m.toString());
-        }
-    }
-
-
     private static FamilyTree configureTree() {
-        // ToDo: Configure tree for Homers side of the family
+
         FamilyTree ft = new FamilyTree();
-//        ft.addPerson( );
-        Person nullPerson = null;
-        Person nullSpouse = null;
 
-        ArrayList<Person> nullChildrenList = new ArrayList<>();
-        ArrayList<Person> nullParentList = new ArrayList<>();
-
-        // bart and lisa and maggie
         Person bart = new Person( "Bart", 2020 );
         ft.addPerson( "Bart", bart);
         Person lisa = new Person( "Lisa", 2021 );
@@ -136,19 +184,20 @@ public class Main {
         ft.addChild("Homer", bart);
         ft.addChild("Homer", maggie);
 
-        // Lets add Marges Sisters
         Person Selma = new Person( "Selma", 1991 );
         ft.addPerson("Selma", Selma);
-        Person patty = new Person( "Patty", 1992 );
 
+        Person patty = new Person( "Patty", 1992 );
         ft.addPerson("Patty", patty);
 
         Person clancy = new Person( "Clancy", 1960 );
         Person jackie = new Person( "Jackie", 1961 );
         clancy.spouse = jackie;
         jackie.spouse = clancy;
+
         ft.addPerson("Clancy", clancy);
         ft.addPerson( "Jackie", jackie);
+
         ft.addChild("Clancy", Selma);
         ft.addChild("Clancy", marge);
         ft.addChild("Clancy", patty);
@@ -163,6 +212,27 @@ public class Main {
         ft.addParent("Patty", jackie);
         ft.addParent("Selma", clancy);
         ft.addParent("Selma", jackie);
+
+        Person mona = new Person("Mona", 1950);
+        ft.addPerson("Mona", mona);
+        ft.addParent("Homer", mona);
+
+        Person Abraham = new Person("Abraham", 1950);
+        ft.addPerson("Abraham", Abraham);
+        ft.addParent("Homer", Abraham);
+
+        Abraham.spouse = mona;
+        mona.spouse = Abraham;
+
+        Person herbert = new Person("Herbert", 1990);
+        Person abbey = new Person("Abbey", 1994);
+        ft.addChild("Abraham", herbert);
+        ft.addChild("Abraham", abbey);
+        ft.addChild("Abraham", homer);
+        ft.addChild("Mona", homer);
+
+        ft.addParent("Herbert", Abraham);
+        ft.addParent("Abbey", Abraham);
         return ft;
     }
 }
